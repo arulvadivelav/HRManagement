@@ -1,0 +1,6 @@
+.chart-view{
+    display: block;
+    box-sizing: border-box; 
+    height: 375px; 
+    width: 750px;
+}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% comment %} {% block extra_styles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/user_list.css' %}">
+{% endblock %} {% endcomment %}
+{% block bodyContent %}
+{% csrf_token %}
+<div class="mt-5">
+    
+    <form action = "{% url 'attendance_detail' %}" method = "post">
+    {% csrf_token %} 
+        {{form}}
+        <input type="submit" value="OK">
+    </form>
+</div>
+
+{% endblock %}
+{% block extra_scripts %}
+{% endblock %}

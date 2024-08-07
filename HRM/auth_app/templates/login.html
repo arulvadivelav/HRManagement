@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_styles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}">
+    <style>
+        .message-container {
+            min-height: 50px; /* Set a minimum height to prevent layout shift */
+        }
+    </style>
+{% endblock %}
+{% block bodyContent %}
+    <div class="wrapper">
+        <div class="container">
+            <h1>Welcome</h1>
+            <form class="form">
+                <input type="text" placeholder="Username">
+                <input type="password" placeholder="Password">
+                <button type="submit" id="login-button">Login</button>
+            </form>
+        </div>
+        
+        <ul class="bg-bubbles">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+    </div>
+{% endblock %}

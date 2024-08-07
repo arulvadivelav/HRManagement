@@ -1,0 +1,24 @@
+nav{
+    background-color: #d3e3c3;
+}
+.sidebar {
+    position: fixed;
+    top: 56px; /* Height of the navbar */
+    bottom: 0;
+    left: 0;
+    width: 250px;
+    padding: 20px;
+    background-color: #fbfcf7;
+    overflow-y: auto;
+    border-right: 1px solid #ddd;
+}
+.main-content {
+    margin-left: 250px; /* Same as the sidebar width */
+    padding: 20px;
+}
+.navbar {
+    z-index: 1030; /* Ensure navbar is above the sidebar */
+}
+.nav-link{
+    color: #868785;
+}

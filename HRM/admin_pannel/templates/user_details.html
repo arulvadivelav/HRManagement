@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% load static %}
+{% block extra_styles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/user_list.css' %}">
+{% endblock %}
+{% block bodyContent %}
+    <div class="container mt-5">
+        <div class="container-fluid d-flex align-items-center justify-content-between mb-1">
+            <div>
+                <h4>User Details</h4>
+            </div>
+            <div>
+                <div class="container-fluid">
+                    <form class="d-flex" onsubmit="return searchUser(event)">
+                        <input class="form-control me-2" type="search" id="SearchUserByname" placeholder="Search" aria-label="Search">
+                        <button class="btn btn-outline-dark" type="submit">Search</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Sno</th>
+                    <th>Name</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in user_details %}
+                <tr>
+                    <td>{{ user.sno }}</td>
+                    <td>{{ user.name }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        <div class="form-check form-switch">
+                            <input 
+                                class="form-check-input" 
+                                type="checkbox" 
+                                role="switch" 
+                                id="flexSwitchCheck{{ user.id }}" 
+                                {% if user.is_active %} checked {% endif %}
+                                onclick="updateUserStatus({{ user.id }}, this.checked)">
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+<script>
+    // Function to update user status (unchanged)
+    function updateUserStatus(user_id, is_active) {
+        const url = `/admin_pannel/update_user_status/${user_id}`;
+        const data = {
+            "is_active": is_active
+        };
+        
+        fetch(url, {
+            method: "PUT",
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify(data)
+        });
+    }
+
+    // Function to perform search and redirect to the filtered user list
+    function searchUser(event) {
+        event.preventDefault();
+        const searchValue = document.getElementById('SearchUserByname').value.trim();
+        const url = `/admin_pannel/users?search_value=${encodeURIComponent(searchValue)}`;
+        window.location.href = url;
+    }
+</script>
+{% endblock %}

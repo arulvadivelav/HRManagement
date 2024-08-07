@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% load static %}
+{% block extra_styles %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/attendance_chart.css' %}">
+{% endblock %}
+{% block bodyContent %}
+<div class="mt-5 d-flex flex-row align-items-center justify-content-between">
+    <div class="d-flex flex-row">
+        <div>Username:</div>
+        <div class="px-1 text-secondary">{{ username|safe }}</div>
+    </div>
+    <div>
+        <form id="dateForm">
+            <div class="d-flex flex-row align-items-center justify-content-between">
+                <div class="mx-2">From Date: <input type="date" id="from_date" name="from_date"></div>
+                <div class="mx-2">To Date: <input type="date" id="to_date" name="to_date"></div>
+                <div class="mx-2">
+                    <input 
+                        class="btn text-white bg-primary" 
+                        type="button" 
+                        value="Submit"
+                        onclick="AttendaceUsingDatetime()"
+                    >
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="chart-view mt-3">
+    <canvas width="1808" 
+        height="904" 
+        id="chartCanvas">
+    </canvas>
+</div>
+{% endblock %}
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+<script>
+    const context = document.getElementById("chartCanvas").getContext('2d');
+    const lineChart = new Chart(context, {
+        type: 'bar',
+        data: {
+            labels: {{ labels|safe }},
+            datasets: [{
+                label: 'Worked Hours',
+                data: {{ log_in_times|safe }},
+                backgroundColor: 'rgba(168,190,144,1)',
+                borderColor: 'rgba(168,190,144,255)',
+                borderWidth: 1,
+                barThickness: 30,
+                borderRadius: 5,
+            },
+            {
+                label: 'Total hours',
+                data: {{ total_hours|safe }},
+                backgroundColor: 'rgba(99,108,89,1)',
+                borderColor: 'rgba(99,108,89,255)',
+                borderWidth: 1,
+                barThickness: 30,
+                borderRadius: 5,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Attendance Details'
+                }
+                },
+            scales: {
+                x: {
+                    stacked: true
+                },
+                y: {
+                    beginAtZero: true
+                }
+            }
+        },
+    });
+
+    function AttendaceUsingDatetime() {
+        event.preventDefault(); // Prevent form from submitting traditionally
+        const from_date = document.getElementById('from_date').value;
+        const to_date = document.getElementById('to_date').value;
+        const url = `/attendance/attendance_detail_with_datefilter`;
+        const data = {
+            "from_date": from_date,
+            "to_date": to_date
+        };
+
+        fetch(url, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Update chart with new data
+            lineChart.data.labels = data.labels;
+            lineChart.data.datasets[0].data = data.log_in_times;
+            lineChart.data.datasets[1].data = data.total_hours;
+            lineChart.update();
+        })
+        .catch(error => console.error('Error:', error));
+    }
+</script>
+{% endblock %}
